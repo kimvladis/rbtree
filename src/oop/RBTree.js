@@ -50,9 +50,12 @@ export default class RBTree {
           }
 
           node.getParent().fillBlack();
-          node.getGrandparent().fillRed();
-          this.rotateRight(node.getGrandparent());
-          this.balance(node.getGrandparent());
+          let gp = node.getGrandparent();
+          if (gp != null) {
+            gp.fillRed();
+            this.rotateRight(gp);
+            this.balance(gp);
+          }
         }
       } else {
         let y = node.getUncle();
@@ -121,7 +124,7 @@ export default class RBTree {
     if (node.getParent()) {
       if (node == node.getParent().getRight())
         node.getParent().setRight(y);
-    else
+      else
         node.getParent().setLeft(y);
     } else {
       this.root = y;
@@ -139,25 +142,25 @@ export default class RBTree {
   toString() {
     var lines = [];
 
-    if ( root != null ) {
+    if (root != null) {
       var indentText = "  ";
       var stack = [[this.root, 0, "ROOT"]];
 
-      while ( stack.length > 0 ) {
+      while (stack.length > 0) {
         var current = stack.pop();
-        var node    = current[0];
-        var indent  = current[1];
-        var line    = "";
+        var node = current[0];
+        var indent = current[1];
+        var line = "";
 
-        for ( var i = 0; i < indent; i++ ) {
+        for (var i = 0; i < indent; i++) {
           line += indentText;
         }
 
         line += current[2] + "(" + node.toString() + ")";
         lines.push(line);
 
-        if ( node.getRight() != null ) stack.push([node.getRight(), indent+1, "R"]);
-        if ( node.getLeft()  != null ) stack.push([node.getLeft(),  indent+1, "L"]);
+        if (node.getRight() != null) stack.push([node.getRight(), indent + 1, "R"]);
+        if (node.getLeft() != null) stack.push([node.getLeft(), indent + 1, "L"]);
       }
     }
 

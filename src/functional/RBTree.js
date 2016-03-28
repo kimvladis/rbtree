@@ -1,114 +1,12 @@
-"use strict";
 const Red = 1;
 const Black = 0;
 
-function createTree(value) {
-  return newNode(Black, value);
-}
-
-
-function insert(node, val) {
-  function balanceAdd(node) {
-    if (node == undefined) {
-      return newNode(Red, val);
-    } else if (val < value(node)) {
-      return balanceLeft(node, balanceAdd(left(node)), right(node));
-    } else if (val > value(node)) {
-      return balanceRight(node, left(node), balanceAdd(right(node)));
-    } else {
-      return node;
-    }
-  }
-
-  function balanceLeft(node, leftNode, rightNode) {
-    if (isBlack(node)) {
-      if (isRed(leftNode) && isRed(left(leftNode))) {
-        if (isRed(rightNode)) {
-          return newNode(Red, value(node), fillBlack(leftNode), fillBlack(rightNode));
-        } else {
-          let
-            x = value(node),
-            y = value(leftNode),
-            z = value(left(leftNode)),
-            a = left(left(leftNode)),
-            b = right(left(leftNode)),
-            c = right(leftNode),
-            d = rightNode;
-          return newNode(Black, y, newNode(Red, z, a, b), newNode(Red, x, c, d));
-        }
-      } else if (isRed(leftNode) && isRed(right(leftNode))) {
-        if (isRed(rightNode)) {
-          return newNode(Red, value(node), fillBlack(leftNode), fillBlack(rightNode));
-        } else {
-          let
-            x = value(node),
-            y = value(right(leftNode)),
-            z = value(leftNode),
-            a = left(leftNode),
-            b = left(right(leftNode)),
-            c = right(right(leftNode)),
-            d = rightNode;
-          return newNode(Black, y, newNode(Red, z, a, b), newNode(Red, x, c, d));
-        }
-      } else {
-        return newNode(color(node), value(node), leftNode, rightNode);
-      }
-    } else {
-      return newNode(color(node), value(node), leftNode, rightNode);
-    }
-  }
-
-  function balanceRight(node, leftNode, rightNode) {
-    if (isBlack(node)) {
-      if (isRed(rightNode) && isRed(right(rightNode))) {
-        if (isRed(leftNode)) {
-          return newNode(Red, value(node), fillBlack(leftNode), fillBlack(rightNode));
-        } else {
-          let
-            x = value(node),
-            y = value(rightNode),
-            z = value(right(rightNode)),
-            a = leftNode,
-            b = left(rightNode),
-            c = left(right(rightNode)),
-            d = right(right(rightNode));
-          return newNode(Black, y, newNode(Red, x, a, b), newNode(Red, z, c, d));
-        }
-      } else if (isRed(rightNode) && isRed(left(rightNode))) {
-        if (isRed(leftNode)) {
-          return newNode(Red, value(node), fillBlack(leftNode), fillBlack(rightNode));
-        } else {
-          let
-            x = value(node),
-            y = value(left(rightNode)),
-            z = value(rightNode),
-            a = leftNode,
-            b = left(left(rightNode)),
-            c = right(left(rightNode)),
-            d = right(rightNode);
-          return newNode(Black, y, newNode(Red, x, a, b), newNode(Red, z, c, d));
-        }
-      } else {
-        return newNode(color(node), value(node), leftNode, rightNode);
-      }
-    } else {
-      return newNode(color(node), value(node), leftNode, rightNode);
-    }
-  }
-
-  function fillBlack(node) {
-    return newNode(Black, value(node), left(node), right(node));
-  }
-
-  return fillBlack(balanceAdd(node));
-}
-
-function newNode(color, value, leftNode, rightNode) {
+function newNode(c, v, l, r) {
   return {
-    color: color,
-    value: value,
-    left: leftNode,
-    right: rightNode
+    color: c,
+    value: v,
+    left: l,
+    right: r,
   };
 }
 
@@ -129,29 +27,126 @@ function right(node) {
 }
 
 function isRed(node) {
-  return node != undefined && color(node) == Red;
+  return node !== undefined && color(node) === Red;
 }
 
 function isBlack(node) {
-  return node == undefined || color(node) == Black;
+  return node === undefined || color(node) === Black;
+}
+
+function createTree(v) {
+  return newNode(Black, v);
+}
+
+function insert(node, val) {
+  function fillBlack(n) {
+    return newNode(Black, value(n), left(n), right(n));
+  }
+
+  function balanceLeft(mainNode, leftNode, rightNode) {
+    if (isBlack(mainNode)) {
+      if (isRed(leftNode) && isRed(left(leftNode))) {
+        if (isRed(rightNode)) {
+          return newNode(Red, value(mainNode), fillBlack(leftNode), fillBlack(rightNode));
+        }
+
+        const x = value(mainNode);
+        const y = value(leftNode);
+        const z = value(left(leftNode));
+        const a = left(left(leftNode));
+        const b = right(left(leftNode));
+        const c = right(leftNode);
+        const d = rightNode;
+
+        return newNode(Black, y, newNode(Red, z, a, b), newNode(Red, x, c, d));
+      } else if (isRed(leftNode) && isRed(right(leftNode))) {
+        if (isRed(rightNode)) {
+          return newNode(Red, value(mainNode), fillBlack(leftNode), fillBlack(rightNode));
+        }
+
+        const x = value(mainNode);
+        const y = value(right(leftNode));
+        const z = value(leftNode);
+        const a = left(leftNode);
+        const b = left(right(leftNode));
+        const c = right(right(leftNode));
+        const d = rightNode;
+
+        return newNode(Black, y, newNode(Red, z, a, b), newNode(Red, x, c, d));
+      }
+    }
+
+    return newNode(color(mainNode), value(mainNode), leftNode, rightNode);
+  }
+
+  function balanceRight(mainNode, leftNode, rightNode) {
+    if (isBlack(mainNode)) {
+      if (isRed(rightNode) && isRed(right(rightNode))) {
+        if (isRed(leftNode)) {
+          return newNode(Red, value(mainNode), fillBlack(leftNode), fillBlack(rightNode));
+        }
+
+        const x = value(mainNode);
+        const y = value(rightNode);
+        const z = value(right(rightNode));
+        const a = leftNode;
+        const b = left(rightNode);
+        const c = left(right(rightNode));
+        const d = right(right(rightNode));
+
+        return newNode(Black, y, newNode(Red, x, a, b), newNode(Red, z, c, d));
+      } else if (isRed(rightNode) && isRed(left(rightNode))) {
+        if (isRed(leftNode)) {
+          return newNode(Red, value(mainNode), fillBlack(leftNode), fillBlack(rightNode));
+        }
+
+        const x = value(mainNode);
+        const y = value(left(rightNode));
+        const z = value(rightNode);
+        const a = leftNode;
+        const b = left(left(rightNode));
+        const c = right(left(rightNode));
+        const d = right(rightNode);
+
+        return newNode(Black, y, newNode(Red, x, a, b), newNode(Red, z, c, d));
+      }
+    }
+
+    return newNode(color(mainNode), value(mainNode), leftNode, rightNode);
+  }
+
+  function balanceAdd(n) {
+    if (n === undefined) {
+      return newNode(Red, val);
+    } else if (val < value(n)) {
+      return balanceLeft(n, balanceAdd(left(n)), right(n));
+    } else if (val > value(n)) {
+      return balanceRight(n, left(n), balanceAdd(right(n)));
+    }
+
+    return n;
+  }
+
+  return fillBlack(balanceAdd(node));
 }
 
 function treeToStr(root) {
-  function traverse(root, indent, side) {
-    if (root == undefined) {
+  function traverse(r, indent, side) {
+    if (r === undefined) {
       return '';
-    } else {
-      let col = color(root) == Red ? 'R' : 'B';
-      return indent + side + '(' + value(root) + ', ' + col + ')' + "\n" + traverse(left(root), indent + "  ", "L") + traverse(right(root), indent + "  ", "R")
     }
+
+    const col = color(root) === Red ? 'R' : 'B';
+
+    return `${indent}${side}(${value(r)}, ${col})\n${traverse(left(r), `${indent}  `, 'L')}${traverse(right(r), `${indent}  `, 'R')}`;
   }
 
-  return traverse(root, "", "ROOT");
+  return traverse(root, '', 'ROOT');
 }
 
 function depth(node) {
-  if (node == null) return 0;
+  if (node === undefined || node === null) return 0;
   return Math.max(1 + depth(left(node)), 1 + depth(right(node)));
 }
 
-export { insert, depth, createTree, treeToStr }
+export { insert, depth, createTree, treeToStr };

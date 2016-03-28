@@ -46,11 +46,11 @@ export default class RBNode {
    * @returns {null|RBNode}
    */
   getGrandparent() {
-    if (this.parent != null) {
+    if (this.parent !== null) {
       return this.parent.parent;
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   /**
@@ -59,15 +59,15 @@ export default class RBNode {
    * @returns {null|RBNode}
    */
   getUncle() {
-    let grandparent = this.getGrandparent();
-    if (grandparent == null) {
+    const grandparent = this.getGrandparent();
+    if (grandparent === null) {
       return null;
     }
-    if (this.parent == grandparent.left) {
+    if (this.parent === grandparent.left) {
       return grandparent.right;
-    } else {
-      return grandparent.left;
     }
+
+    return grandparent.left;
   }
 
   /**
@@ -133,7 +133,7 @@ export default class RBNode {
   }
 
   /**
-   * Fill node withn red
+   * Fill node within red
    */
   fillRed() {
     this.color = RED;
@@ -145,7 +145,7 @@ export default class RBNode {
    * @returns {boolean}
    */
   isRed() {
-    return this.color == RED;
+    return this.color === RED;
   }
 
   /**
@@ -161,7 +161,7 @@ export default class RBNode {
    * @returns {boolean}
    */
   isBlack() {
-    return this.color == BLACK;
+    return this.color === BLACK;
   }
 
   /**
@@ -171,43 +171,43 @@ export default class RBNode {
    * @returns {boolean|RBNode}
    */
   search(value) {
-    if (value == this.value) return this;
+    if (value === this.value) return this;
     if (value > this.value) {
-      if (this.right == null) {
+      if (this.right === null) {
         return false;
-      } else {
-        return this.right.search(value);
       }
-    } else {
-      if (this.left == null) {
-        return false;
-      } else {
-        return this.left.search(value);
-      }
+
+      return this.right.search(value);
     }
+
+    if (this.left === null) {
+      return false;
+    }
+
+    return this.left.search(value);
   }
 
   /**
    * Inserts value
    *
    * @param value
-   * @returns {RBNode}
+   * @returns {RBNode|boolean}
    */
   insert(value) {
-    if (value == this.value) return false;
+    if (value === this.value) return false;
     if (value > this.value) {
-      if (this.right == null) {
+      if (this.right === null) {
         return this.insertRight(value);
-      } else {
-        return this.right.insert(value);
       }
-    } else {
-      if (this.left == null) {
-        return this.insertLeft(value);
-      } else {
-        return this.left.insert(value);
-      }
+
+      return this.right.insert(value);
     }
+
+    if (this.left === null) {
+      return this.insertLeft(value);
+    }
+
+    return this.left.insert(value);
   }
 
   /**
@@ -216,7 +216,7 @@ export default class RBNode {
    * @returns {boolean}
    */
   isLeft() {
-    return this.getParent() != null && this.getParent().getLeft() == this;
+    return this.getParent() !== null && this.getParent().getLeft() === this;
   }
 
   /**
@@ -225,7 +225,7 @@ export default class RBNode {
    * @returns {boolean}
    */
   isRight() {
-    return this.getParent() != null && this.getParent().getRight() == this;
+    return this.getParent() !== null && this.getParent().getRight() === this;
   }
 
   /**

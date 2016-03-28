@@ -167,12 +167,7 @@ function treeToStr(root) {
 
 function depth(node) {
   if (node == null) return 0;
-  return Math.max(1 + exports.depth(left(node)), 1 + exports.depth(right(node)));
+  return Math.max(1 + depth(left(node)), 1 + depth(right(node)));
 }
 
-function level(node) {
-  if (node == null) return 0;
-  return 1 + exports.level(parent(node));
-}
-
-export { insert, depth, level, createTree, treeToStr }
+export { insert, depth, createTree, treeToStr }

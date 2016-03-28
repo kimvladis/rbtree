@@ -137,32 +137,16 @@ function isBlack(node) {
 }
 
 function treeToStr(root) {
-  let lines = [];
-
-  if (root != null) {
-    let indentText = "  ";
-    let stack = [[root, 0, "ROOT"]];
-
-    while (stack.length > 0) {
-      let current = stack.pop();
-      let node = current[0];
-      let indent = current[1];
-      let line = "";
-
-      for (let i = 0; i < indent; i++) {
-        line += indentText;
-      }
-
-      let col = color(node) == Red ? 'R' : 'B';
-      line += current[2] + "(" + value(node) + ', ' + col + ")";
-      lines.push(line);
-
-      if (right(node) != null) stack.push([right(node), indent + 1, "R"]);
-      if (left(node) != null) stack.push([left(node), indent + 1, "L"]);
+  function traverse(root, indent, side) {
+    if (root == undefined) {
+      return '';
+    } else {
+      let col = color(root) == Red ? 'R' : 'B';
+      return indent + side + '(' + value(root) + ', ' + col + ')' + "\n" + traverse(left(root), indent + "  ", "L") + traverse(right(root), indent + "  ", "R")
     }
   }
 
-  return lines.join("\n");
+  return traverse(root, "", "ROOT");
 }
 
 function depth(node) {

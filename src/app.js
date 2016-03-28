@@ -1,7 +1,9 @@
-import RBTree from './oop/RBTree.js';
-import { insert, depth, level, RBNode, treeToStr } from './functional/RBTree.js'
+"use strict";
 
-var n = 2000000;
+import RBTree from './oop/RBTree';
+import { insert, depth, level, treeToStr, createTree } from './functional/RBTree'
+
+var n = 1000000;
 
 var testData = [];
 
@@ -16,7 +18,7 @@ function getRandomInt(min, max) {
 /** functional paradigm */
 console.time('functional');
 
-var fTree = new RBNode(10);
+var fTree = createTree(10);
 
 testData.forEach(function (value) {
   fTree = insert(fTree, value);

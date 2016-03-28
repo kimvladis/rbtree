@@ -16,6 +16,7 @@ export default class RBTree {
   insert(value) {
     if (this.root == null) {
       this.root = new RBNode(value);
+      this.root.fillBlack();
     } else {
       var newNode = this.root.insert(value);
       this.balance(newNode);
@@ -156,7 +157,8 @@ export default class RBTree {
           line += indentText;
         }
 
-        line += current[2] + "(" + node.toString() + ")";
+        let col = node.isRed() ? 'R' : 'B';
+        line += current[2] + "(" + node.toString() + ', ' + col + ")";
         lines.push(line);
 
         if (node.getRight() != null) stack.push([node.getRight(), indent + 1, "R"]);

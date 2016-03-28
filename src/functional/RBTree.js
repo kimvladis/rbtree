@@ -1,234 +1,139 @@
-function RBNode(value) {
-  this.value = value;
-  this.left = null;
-  this.right = null;
-  this.parent = null;
-  this.color = 0;
+"use strict";
+const Red = 1;
+const Black = 0;
+
+function createTree(value) {
+  return newNode(Black, value);
 }
 
-RBNode.prototype.toString = function () {
-  return this.value.toString();
-};
+
+function insert(node, val) {
+  function balanceAdd(node) {
+    if (node == undefined) {
+      return newNode(Red, val);
+    } else if (val < value(node)) {
+      return balanceLeft(node, balanceAdd(left(node)), right(node));
+    } else if (val > value(node)) {
+      return balanceRight(node, left(node), balanceAdd(right(node)));
+    } else {
+      return node;
+    }
+  }
+
+  function balanceLeft(node, leftNode, rightNode) {
+    if (isBlack(node)) {
+      if (isRed(leftNode) && isRed(left(leftNode))) {
+        if (isRed(rightNode)) {
+          return newNode(Red, value(node), fillBlack(leftNode), fillBlack(rightNode));
+        } else {
+          let
+            x = value(node),
+            y = value(leftNode),
+            z = value(left(leftNode)),
+            a = left(left(leftNode)),
+            b = right(left(leftNode)),
+            c = right(leftNode),
+            d = rightNode;
+          return newNode(Black, y, newNode(Red, z, a, b), newNode(Red, x, c, d));
+        }
+      } else if (isRed(leftNode) && isRed(right(leftNode))) {
+        if (isRed(rightNode)) {
+          return newNode(Red, value(node), fillBlack(leftNode), fillBlack(rightNode));
+        } else {
+          let
+            x = value(node),
+            y = value(right(leftNode)),
+            z = value(leftNode),
+            a = left(leftNode),
+            b = left(right(leftNode)),
+            c = right(right(leftNode)),
+            d = rightNode;
+          return newNode(Black, y, newNode(Red, z, a, b), newNode(Red, x, c, d));
+        }
+      } else {
+        return newNode(color(node), value(node), leftNode, rightNode);
+      }
+    } else {
+      return newNode(color(node), value(node), leftNode, rightNode);
+    }
+  }
+
+  function balanceRight(node, leftNode, rightNode) {
+    if (isBlack(node)) {
+      if (isRed(rightNode) && isRed(right(rightNode))) {
+        if (isRed(leftNode)) {
+          return newNode(Red, value(node), fillBlack(leftNode), fillBlack(rightNode));
+        } else {
+          let
+            x = value(node),
+            y = value(rightNode),
+            z = value(right(rightNode)),
+            a = leftNode,
+            b = left(rightNode),
+            c = left(right(rightNode)),
+            d = right(right(rightNode));
+          return newNode(Black, y, newNode(Red, x, a, b), newNode(Red, z, c, d));
+        }
+      } else if (isRed(rightNode) && isRed(left(rightNode))) {
+        if (isRed(leftNode)) {
+          return newNode(Red, value(node), fillBlack(leftNode), fillBlack(rightNode));
+        } else {
+          let
+            x = value(node),
+            y = value(left(rightNode)),
+            z = value(rightNode),
+            a = leftNode,
+            b = left(left(rightNode)),
+            c = right(left(rightNode)),
+            d = right(rightNode);
+          return newNode(Black, y, newNode(Red, x, a, b), newNode(Red, z, c, d));
+        }
+      } else {
+        return newNode(color(node), value(node), leftNode, rightNode);
+      }
+    } else {
+      return newNode(color(node), value(node), leftNode, rightNode);
+    }
+  }
+
+  function fillBlack(node) {
+    return newNode(Black, value(node), left(node), right(node));
+  }
+
+  return fillBlack(balanceAdd(node));
+}
+
+function newNode(color, value, leftNode, rightNode) {
+  return {
+    color: color,
+    value: value,
+    left: leftNode,
+    right: rightNode
+  };
+}
 
 function value(node) {
-  if (node != null)
-    return node.value;
-
-  return null;
+  return node.value;
 }
 
-function setParent(node, parent) {
-  if (node != null)
-    node.parent = parent;
-
-  return node;
-}
-
-function setLeft(node, leftNode) {
-  if (node != null)
-    node.left = leftNode;
-
-  return node;
-}
-
-function setRight(node, rightNode) {
-  if (node != null)
-    node.right = rightNode;
-
-  return node;
-}
-
-function _insert(node, value) {
-  let newNode = new RBNode(value);
-
-  return fillRed(setParent(newNode, node));
-}
-
-function insertLeft(node, value) {
-  return left(setLeft(node, _insert(node, value)));
-}
-
-function insertRight(node, value) {
-  return right(setRight(node, _insert(node, value)));
-}
-
-function isRed(node) {
-  return node != null && node.color == 1;
-}
-
-function fillRed(node) {
-  if (node != null)
-    node.color = 1;
-
-  return node;
-}
-
-function isBlack(params) {
-  return node == null || node.color == 0;
-}
-
-function fillBlack(node) {
-  if (node != null)
-    node.color = 0;
-
-  return node;
-}
-
-function parent(node) {
-  if (node != null)
-    return node.parent;
-  else
-    return null;
+function color(node) {
+  return node.color;
 }
 
 function left(node) {
-  if (node != null)
-    return node.left;
-  else
-    return null
+  return node.left;
 }
 
 function right(node) {
-  if (node != null)
-    return node.right;
-  else
-    return null;
+  return node.right;
 }
 
-function grandparent(node) {
-  return parent(parent(node));
+function isRed(node) {
+  return node != undefined && color(node) == Red;
 }
 
-function uncle(node) {
-  if (isLeft(parent(node))) {
-    return right(grandparent(node));
-  } else {
-    return left(grandparent(node));
-  }
-}
-
-function isLeft(node) {
-  return left(parent(node)) == node;
-}
-
-function isRight(node) {
-  return right(parent(node)) == node;
-}
-
-function search(node, val, closest) {
-  if (node == null) return null;
-  if (val == value(node)) return node;
-  if (val > value(node)) {
-    if (closest == true && right(node) == null) {
-      return node;
-    }
-    return search(right(node), val, closest);
-  } else {
-    if (closest == true && left(node) == null) {
-      return node;
-    }
-    return search(left(node), val, closest);
-  }
-}
-
-function insert(node, val) {
-  let closestNode = search(node, val, true);
-  if (value(closestNode) == val) return node;
-  else if (value(closestNode) < val) node = balance(insertRight(closestNode, val), node);
-  else node = balance(insertLeft(closestNode, val), node);
-
-  return node;
-}
-
-function balance(node, root) {
-  if (node == root) {
-    fillBlack(node);
-    return root;
-  }
-
-  if (isRed(parent(node))) {
-    if (isRed(uncle(node))) {
-      fillBlack(parent(node));
-      fillBlack(uncle(node));
-      fillRed(grandparent(node));
-
-      return balance(grandparent(node), root);
-    }
-
-    if (isLeft(parent(node))) {
-      if (isRight(node)) {
-        node = parent(node);
-        root = rotateLeft(node, root);
-      }
-
-      fillBlack(parent(node));
-
-      let _gp = grandparent(node);
-      fillRed(_gp);
-      root = rotateRight(_gp, root);
-
-      return balance(_gp, root);
-    } else {
-      if (isLeft(node)) {
-        node = parent(node);
-        root = rotateRight(node, root);
-      }
-
-      fillBlack(parent(node));
-
-      let _gp = grandparent(node);
-      fillRed(_gp);
-      root = rotateLeft(_gp, root);
-
-      return balance(_gp, root);
-    }
-  }
-
-  return root;
-}
-
-function rotateLeft(node, root) {
-  let _tmp = right(node);
-  setRight(node, left(_tmp));
-  setParent(left(_tmp), node);
-  setParent(_tmp, parent(node));
-
-  if (parent(node)) {
-    if (isLeft(node)) {
-      setLeft(parent(node), _tmp);
-    } else {
-      setRight(parent(node), _tmp);
-    }
-  } else {
-    root = _tmp;
-  }
-
-  setLeft(_tmp, node);
-  setParent(node, _tmp);
-
-  return root;
-}
-
-function rotateRight(node, root) {
-  let _tmp = left(node);
-  setLeft(node, right(_tmp));
-  setParent(right(_tmp), node);
-  setParent(_tmp, parent(node));
-
-  if (parent(node)) {
-    if (isRight(node)) {
-      setRight(parent(node), _tmp);
-    } else {
-      setLeft(parent(node), _tmp);
-    }
-  } else {
-    root = _tmp;
-  }
-
-  setRight(_tmp, node);
-  setParent(node, _tmp);
-
-  return root;
+function isBlack(node) {
+  return node == undefined || color(node) == Black;
 }
 
 function treeToStr(root) {
@@ -248,7 +153,8 @@ function treeToStr(root) {
         line += indentText;
       }
 
-      line += current[2] + "(" + node.toString() + ")";
+      let col = color(node) == Red ? 'R' : 'B';
+      line += current[2] + "(" + value(node) + ', ' + col + ")";
       lines.push(line);
 
       if (right(node) != null) stack.push([right(node), indent + 1, "R"]);
@@ -261,12 +167,12 @@ function treeToStr(root) {
 
 function depth(node) {
   if (node == null) return 0;
-  return Math.max(1 + depth(left(node)), 1 + depth(right(node)));
+  return Math.max(1 + exports.depth(left(node)), 1 + exports.depth(right(node)));
 }
 
 function level(node) {
   if (node == null) return 0;
-  return 1 + level(parent(node));
+  return 1 + exports.level(parent(node));
 }
 
-export { insert, depth, level, RBNode, treeToStr }
+export { insert, depth, level, createTree, treeToStr }

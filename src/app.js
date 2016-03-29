@@ -38,3 +38,7 @@ testData.forEach((value) => {
 console.timeEnd('oop');
 console.log('depth:', depth(tree.root));
 console.log('log(n):', Math.log2(n));
+
+console.time('sort');
+testData.sort((a, b) => a - b);
+console.timeEnd('sort');

@@ -1,272 +1,288 @@
-function RBNode(value) {
-  this.value = value;
+function RBNode(v) {
+  this.value = v;
   this.left = null;
   this.right = null;
   this.parent = null;
   this.color = 0;
 }
 
-RBNode.prototype.toString = function () {
-  return this.value.toString();
-};
+RBNode.prototype.toString = () => this.value.toString();
 
-function value(node) {
-  if (node != null)
-    return node.value;
+function value(n) {
+  if (n !== null) {
+    return n.value;
+  }
 
   return null;
 }
 
-function setParent(node, parent) {
-  if (node != null)
-    node.parent = parent;
+function setParent(n, p) {
+  if (n !== null) {
+    n.parent = p;
+  }
 
-  return node;
+  return n;
 }
 
-function setLeft(node, leftNode) {
-  if (node != null)
-    node.left = leftNode;
+function setLeft(n, l) {
+  if (n !== null) {
+    n.left = l;
+  }
 
-  return node;
+  return n;
 }
 
-function setRight(node, rightNode) {
-  if (node != null)
-    node.right = rightNode;
+function setRight(n, r) {
+  if (n !== null) {
+    n.right = r;
+  }
 
-  return node;
+  return n;
 }
 
-function _insert(node, value) {
-  let newNode = new RBNode(value);
-
-  return fillRed(setParent(newNode, node));
+function isRed(n) {
+  return n !== null && n.color === 1;
 }
 
-function insertLeft(node, value) {
-  return left(setLeft(node, _insert(node, value)));
+function fillRed(n) {
+  if (n !== null) {
+    n.color = 1;
+  }
+
+  return n;
 }
 
-function insertRight(node, value) {
-  return right(setRight(node, _insert(node, value)));
+function isBlack(n) {
+  return n === null || n.color === 0;
 }
 
-function isRed(node) {
-  return node != null && node.color == 1;
+function fillBlack(n) {
+  if (n !== null) {
+    n.color = 0;
+  }
+
+  return n;
 }
 
-function fillRed(node) {
-  if (node != null)
-    node.color = 1;
+function parent(n) {
+  if (n !== null) {
+    return n.parent;
+  }
 
-  return node;
+  return null;
 }
 
-function isBlack(params) {
-  return node == null || node.color == 0;
+function left(n) {
+  if (n !== null) {
+    return n.left;
+  }
+
+  return null;
 }
 
-function fillBlack(node) {
-  if (node != null)
-    node.color = 0;
+function right(n) {
+  if (n !== null) {
+    return n.right;
+  }
 
-  return node;
-}
-
-function parent(node) {
-  if (node != null)
-    return node.parent;
-  else
-    return null;
-}
-
-function left(node) {
-  if (node != null)
-    return node.left;
-  else
-    return null
-}
-
-function right(node) {
-  if (node != null)
-    return node.right;
-  else
-    return null;
+  return null;
 }
 
 function grandparent(node) {
   return parent(parent(node));
 }
 
-function uncle(node) {
-  if (isLeft(parent(node))) {
-    return right(grandparent(node));
-  } else {
-    return left(grandparent(node));
-  }
-}
-
 function isLeft(node) {
-  return left(parent(node)) == node;
+  return left(parent(node)) === node;
 }
 
 function isRight(node) {
-  return right(parent(node)) == node;
+  return right(parent(node)) === node;
 }
 
-function search(node, val, closest) {
-  if (node == null) return null;
-  if (val == value(node)) return node;
-  if (val > value(node)) {
-    if (closest == true && right(node) == null) {
-      return node;
+function uncle(node) {
+  if (isLeft(parent(node))) {
+    return right(grandparent(node));
+  }
+
+  return left(grandparent(node));
+}
+
+function _insert(n, v) {
+  const newNode = new RBNode(v);
+
+  return fillRed(setParent(newNode, n));
+}
+
+function insertLeft(n, v) {
+  return left(setLeft(n, _insert(n, v)));
+}
+
+function insertRight(n, v) {
+  return right(setRight(n, _insert(n, v)));
+}
+
+function search(n, v, c) {
+  if (n === null) return null;
+
+  if (v === value(n)) return n;
+
+  if (v > value(n)) {
+    if (c === true && right(n) === null) {
+      return n;
     }
-    return search(right(node), val, closest);
+
+    return search(right(n), v, c);
+  }
+
+  if (c === true && left(n) === null) {
+    return n;
+  }
+
+  return search(left(n), v, c);
+}
+
+function rotateLeft(n, r) {
+  const _tmp = right(n);
+  setRight(n, left(_tmp));
+  setParent(left(_tmp), n);
+  setParent(_tmp, parent(n));
+
+  if (parent(n)) {
+    if (isLeft(n)) {
+      setLeft(parent(n), _tmp);
+    } else {
+      setRight(parent(n), _tmp);
+    }
   } else {
-    if (closest == true && left(node) == null) {
-      return node;
-    }
-    return search(left(node), val, closest);
-  }
-}
-
-function insert(node, val) {
-  let closestNode = search(node, val, true);
-  if (value(closestNode) == val) return node;
-  else if (value(closestNode) < val) node = balance(insertRight(closestNode, val), node);
-  else node = balance(insertLeft(closestNode, val), node);
-
-  return node;
-}
-
-function balance(node, root) {
-  if (node == root) {
-    fillBlack(node);
-    return root;
+    r = _tmp;
   }
 
-  if (isRed(parent(node))) {
-    if (isRed(uncle(node))) {
-      fillBlack(parent(node));
-      fillBlack(uncle(node));
-      fillRed(grandparent(node));
+  setLeft(_tmp, n);
+  setParent(n, _tmp);
 
-      return balance(grandparent(node), root);
+  return r;
+}
+
+function rotateRight(n, r) {
+  const _tmp = left(n);
+  setLeft(n, right(_tmp));
+  setParent(right(_tmp), n);
+  setParent(_tmp, parent(n));
+
+  if (parent(n)) {
+    if (isRight(n)) {
+      setRight(parent(n), _tmp);
+    } else {
+      setLeft(parent(n), _tmp);
+    }
+  } else {
+    r = _tmp;
+  }
+
+  setRight(_tmp, n);
+  setParent(n, _tmp);
+
+  return r;
+}
+
+function balance(n, r) {
+  if (n === r) {
+    fillBlack(n);
+    return r;
+  }
+
+  if (isRed(parent(n))) {
+    if (isRed(uncle(n))) {
+      fillBlack(parent(n));
+      fillBlack(uncle(n));
+      fillRed(grandparent(n));
+
+      return balance(grandparent(n), r);
     }
 
-    if (isLeft(parent(node))) {
-      if (isRight(node)) {
-        node = parent(node);
-        root = rotateLeft(node, root);
+    if (isLeft(parent(n))) {
+      if (isRight(n)) {
+        n = parent(n);
+        r = rotateLeft(n, r);
       }
 
-      fillBlack(parent(node));
+      fillBlack(parent(n));
 
-      let _gp = grandparent(node);
+      const _gp = grandparent(n);
       fillRed(_gp);
-      root = rotateRight(_gp, root);
+      r = rotateRight(_gp, r);
 
-      return balance(_gp, root);
-    } else {
-      if (isLeft(node)) {
-        node = parent(node);
-        root = rotateRight(node, root);
-      }
-
-      fillBlack(parent(node));
-
-      let _gp = grandparent(node);
-      fillRed(_gp);
-      root = rotateLeft(_gp, root);
-
-      return balance(_gp, root);
+      return balance(_gp, r);
     }
+
+    if (isLeft(n)) {
+      n = parent(n);
+      r = rotateRight(n, r);
+    }
+
+    fillBlack(parent(n));
+
+    const _gp = grandparent(n);
+    fillRed(_gp);
+    r = rotateLeft(_gp, r);
+
+    return balance(_gp, r);
   }
 
-  return root;
+  return r;
 }
 
-function rotateLeft(node, root) {
-  let _tmp = right(node);
-  setRight(node, left(_tmp));
-  setParent(left(_tmp), node);
-  setParent(_tmp, parent(node));
+function insert(n, v) {
+  const closestNode = search(n, v, true);
 
-  if (parent(node)) {
-    if (isLeft(node)) {
-      setLeft(parent(node), _tmp);
-    } else {
-      setRight(parent(node), _tmp);
-    }
+  if (value(closestNode) === v) {
+    return n;
+  } else if (value(closestNode) < v) {
+    n = balance(insertRight(closestNode, v), n);
   } else {
-    root = _tmp;
+    n = balance(insertLeft(closestNode, v), n);
   }
 
-  setLeft(_tmp, node);
-  setParent(node, _tmp);
-
-  return root;
+  return n;
 }
 
-function rotateRight(node, root) {
-  let _tmp = left(node);
-  setLeft(node, right(_tmp));
-  setParent(right(_tmp), node);
-  setParent(_tmp, parent(node));
+function treeToStr(r) {
+  const lines = [];
 
-  if (parent(node)) {
-    if (isRight(node)) {
-      setRight(parent(node), _tmp);
-    } else {
-      setLeft(parent(node), _tmp);
-    }
-  } else {
-    root = _tmp;
-  }
-
-  setRight(_tmp, node);
-  setParent(node, _tmp);
-
-  return root;
-}
-
-function treeToStr(root) {
-  let lines = [];
-
-  if (root != null) {
-    let indentText = "  ";
-    let stack = [[root, 0, "ROOT"]];
+  if (r !== null) {
+    const indentText = '  ';
+    const stack = [[r, 0, 'ROOT']];
 
     while (stack.length > 0) {
-      let current = stack.pop();
-      let node = current[0];
-      let indent = current[1];
-      let line = "";
+      const current = stack.pop();
+      const node = current[0];
+      const indent = current[1];
+      let line = '';
 
       for (let i = 0; i < indent; i++) {
         line += indentText;
       }
 
-      line += current[2] + "(" + node.toString() + ")";
+      line += `${current[2]}(${node.toString()})`;
       lines.push(line);
 
-      if (right(node) != null) stack.push([right(node), indent + 1, "R"]);
-      if (left(node) != null) stack.push([left(node), indent + 1, "L"]);
+      if (right(node) !== null) stack.push([right(node), indent + 1, 'R']);
+      if (left(node) !== null) stack.push([left(node), indent + 1, 'L']);
     }
   }
 
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 function depth(node) {
-  if (node == null) return 0;
+  if (node === null) return 0;
   return Math.max(1 + depth(left(node)), 1 + depth(right(node)));
 }
 
 function level(node) {
-  if (node == null) return 0;
+  if (node === null) return 0;
   return 1 + level(parent(node));
 }
 
-export { insert, depth, level, RBNode, treeToStr }
+export { insert, depth, level, RBNode, treeToStr };

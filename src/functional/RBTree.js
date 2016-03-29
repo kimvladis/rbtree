@@ -39,11 +39,9 @@ function createTree(v) {
 }
 
 function insert(node, val) {
-  function fillBlack(n) {
-    return newNode(Black, value(n), left(n), right(n));
-  }
+  const fillBlack = (n) => newNode(Black, value(n), left(n), right(n));
 
-  function balanceLeft(mainNode, leftNode, rightNode) {
+  const balanceLeft = (mainNode, leftNode, rightNode) => {
     if (isBlack(mainNode)) {
       if (isRed(leftNode) && isRed(left(leftNode))) {
         if (isRed(rightNode)) {
@@ -77,9 +75,9 @@ function insert(node, val) {
     }
 
     return newNode(color(mainNode), value(mainNode), leftNode, rightNode);
-  }
+  };
 
-  function balanceRight(mainNode, leftNode, rightNode) {
+  const balanceRight = (mainNode, leftNode, rightNode) => {
     if (isBlack(mainNode)) {
       if (isRed(rightNode) && isRed(right(rightNode))) {
         if (isRed(leftNode)) {
@@ -113,9 +111,9 @@ function insert(node, val) {
     }
 
     return newNode(color(mainNode), value(mainNode), leftNode, rightNode);
-  }
+  };
 
-  function balanceAdd(n) {
+  const balanceAdd = (n) => {
     if (n === undefined) {
       return newNode(Red, val);
     } else if (val < value(n)) {
@@ -125,7 +123,7 @@ function insert(node, val) {
     }
 
     return n;
-  }
+  };
 
   return fillBlack(balanceAdd(node));
 }

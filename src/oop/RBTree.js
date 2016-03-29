@@ -172,4 +172,13 @@ export default class RBTree {
 
     return lines.join('\n');
   }
+
+  depth() {
+    const _depth = (n) => {
+      if (n === null) return 0;
+      return Math.max(1 + _depth(n.getLeft()), 1 + _depth(n.getRight()));
+    };
+
+    return _depth(this.root);
+  }
 }

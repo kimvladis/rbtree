@@ -8,7 +8,10 @@
       {
         "props": false
       }
-    ]
+    ],
+    "new-cap": [2, {
+      "capIsNewExceptions": ["Immutable.Map", "Immutable.Set", "Immutable.List"]
+    }]
   },
   "extends": "airbnb"
 }
